@@ -2,13 +2,12 @@ import streamlit as st
 
 # Initialize chatbot responses
 def chatbot_response(user_input):
-    # Simple echo response for demonstration
     return f"You said: {user_input}"
 
 # Function to handle button clicks
 def handle_button_click(option, level):
     st.session_state[level] = option
-    st.experimental_rerun()  # Rerun the app to move to the next step
+    st.rerun()  # Restart the app to update state
 
 # Function to generate buttons and handle their clicks
 def generate_buttons(options, level):
@@ -20,13 +19,13 @@ def generate_buttons(options, level):
 # Function to handle exit button click for discipline
 def handle_exit_discipline():
     st.session_state['discipline'] = None
-    st.experimental_rerun()
+    st.rerun()  # Restart the app to update state
 
 # Function to handle exit button click for project
 def handle_exit_project():
     st.session_state.clear()
     st.session_state['page'] = 'main'
-    st.experimental_rerun()
+    st.rerun()  # Restart the app to update state
 
 # Function to generate URLs based on input values
 def generate_urls(project, discipline, dashboard_name):
@@ -58,8 +57,8 @@ if 'project' not in st.session_state:
     st.session_state['project'] = None
 if 'discipline' not in st.session_state:
     st.session_state['discipline'] = None
-if 'user_inputs' not in st.session_state:
-    st.session_state['user_inputs'] = []
+if 'dashboard_name' not in st.session_state:
+    st.session_state['dashboard_name'] = ""
 
 # Main page
 if st.session_state['page'] == 'main':
@@ -74,7 +73,7 @@ if st.session_state['page'] == 'main':
         project_text = st.text_input("Or enter the project name:")
         if project_text:
             st.session_state['project'] = project_text
-            st.experimental_rerun()
+            st.rerun()  # Update the app state immediately
 
     else:
         st.write(f"Selected PROJECT: {st.session_state['project']}")
@@ -90,7 +89,7 @@ if st.session_state['page'] == 'main':
         discipline_text = st.text_input("Or enter the discipline name:")
         if discipline_text:
             st.session_state['discipline'] = discipline_text
-            st.experimental_rerun()
+            st.rerun()  # Update the app state immediately
 
     else:
         if st.session_state['discipline'] is not None:
@@ -100,13 +99,13 @@ if st.session_state['page'] == 'main':
 
     if st.session_state['project'] is not None and st.session_state['discipline'] is not None:
         st.write("")  # Add a small gap
-        dashboard_name = st.text_input("Enter the name of the Dashboard: ", key="user_input")
+        dashboard_name = st.text_input("Enter the name of the Dashboard: ", value=st.session_state['dashboard_name'], key="user_input")
 
         # Handle user input and chatbot response
         if dashboard_name:
             response = chatbot_response(dashboard_name)
             st.write(f"Chatbot: {response}")
-            st.session_state['user_inputs'].append(dashboard_name)
+            st.session_state['dashboard_name'] = dashboard_name
 
             st.write("### Collected Values")
             project = st.session_state['project']
